@@ -25,9 +25,10 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Bad request"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Bad request"}]]>
+						</ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus">400</ee:set-variable>
@@ -38,9 +39,10 @@ output application/json
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Resource not found"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Resource not found"}]]>
+						</ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus">404</ee:set-variable>
@@ -51,9 +53,10 @@ output application/json
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Method not allowed"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Method not allowed"}]]>
+						</ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus">405</ee:set-variable>
@@ -64,9 +67,10 @@ output application/json
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not acceptable"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Not acceptable"}]]>
+						</ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus">406</ee:set-variable>
@@ -74,15 +78,16 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="efd0287b-0774-4e77-8890-0380e8565911">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Unsupported media type"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Unsupported media type"}]]>
+					</ee:set-payload>
                     </ee:message>
                     <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
@@ -90,9 +95,10 @@ output application/json
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Not Implemented"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Not Implemented"}]]>
+						</ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus">501</ee:set-variable>
@@ -117,9 +123,10 @@ output application/json
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{message: "Resource not found"}]]></ee:set-payload>
+							output application/json
+							---
+							{message: "Resource not found"}]]>
+						</ee:set-payload>
                     </ee:message>
                     <ee:variables>
                         <ee:set-variable variableName="httpStatus">404</ee:set-variable>
@@ -150,11 +157,12 @@ payload map (order) ->
 		<ee:transform doc:name="Add Net Value" doc:id="b89047de-3e2b-4ad9-8d37-b462eed5e1e8">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
-output application/json
-fun netValue(price, quantity) = price*quantity 
----
-payload map (order) -> 
-    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]></ee:set-payload>
+					output application/json
+					fun netValue(price, quantity) = price*quantity 
+					---
+					payload map (order) -> 
+					    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]>
+    				</ee:set-payload>
 			</ee:message>
 		</ee:transform>
     </flow>
@@ -164,10 +172,7 @@ payload map (order) ->
 		</db:select>
 		<ee:transform doc:name="To Json" doc:id="12d1ff7a-b122-482d-be80-f617595d12c0" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
+				<ee:set-payload ><![CDATA[%dw 2.0 output application/json --- payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
     </flow>
@@ -177,34 +182,44 @@ payload]]></ee:set-payload>
 		</db:select>
 		<ee:transform doc:name="To Json" doc:id="b2449014-dcca-4d44-8ae7-480841894060" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
+				<ee:set-payload ><![CDATA[%dw 2.0 output application/json --- payload]]>
+				</ee:set-payload>
 			</ee:message>
 		</ee:transform>
     </flow>
     <flow name="post:\orders\pending\buy:application\json:max-the-mule-broker-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+        <choice doc:name="Choice" doc:id="6ac61f3a-5bbf-4ab2-9823-1f4c6da14395" />
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="257c4803-a1e2-4ddb-891d-601d2bbaf8e4">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "buy order created"
-}]]></ee:set-payload>
+					output application/json
+					fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
+					---
+					{
+						'date' : timeNow(), 
+						'symbol' : payload.SYMBOL, 
+						'quantity' : payload.QUANTITY, 
+						'price' : payload.PRICE
+					}
+					]]>
+				</ee:set-payload>
             </ee:message>
         </ee:transform>
+		<!-- <db:insert doc:name="Insert" doc:id="20a058d2-e1a1-4dd4-9963-56d4d2cd870b" config-ref="Database_Config">
+			<db:sql > INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, 'BUY', 'Pending', :symbol, :quantity, :price);</db:sql>
+			<db:input-parameters ><![CDATA[#[ {'date' : now, 'symbol' : payload.SYMBOL, 'quantity' : payload.QUANTITY, 'price' : payload.PRICE}]]]></db:input-parameters>
+		</db:insert> -->
     </flow>
     <flow name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "sell order created"
-}]]></ee:set-payload>
+					output application/json
+					---
+					{
+					  message: "sell order created"
+					}]]>
+				</ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
