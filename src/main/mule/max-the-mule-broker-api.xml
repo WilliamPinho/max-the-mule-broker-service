@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <http:listener-config name="max-the-mule-broker-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
     <apikit:config name="max-the-mule-broker-api-config" raml="max-the-mule-broker-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="max-the-mule-broker-api-main">
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="5ff9a8e8-ace2-4fb0-9e4e-6dbf749c9dab" >
+		<db:my-sql-connection host="mysql-baservices.cvfzfbm5lfp0.us-west-2.rds.amazonaws.com" port="3306" user="msbaservices" password="OnB0ardMul3!" database="TRAINING" />
+	</db:config>
+	<flow name="max-the-mule-broker-api-main">
         <http:listener config-ref="max-the-mule-broker-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -124,16 +129,60 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\orders\cancelled:max-the-mule-broker-api-config">
-        <logger level="INFO" message="get:\orders\cancelled:max-the-mule-broker-api-config" />
+		<db:select doc:name="Select Cancelled Orders" doc:id="c409257c-0324-40bb-bf4e-0ca57a978c21" config-ref="Database_Config" >
+			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Cancelled';</db:sql>
+		</db:select>
+		<ee:transform doc:name="Copy_of_Add Net Value" doc:id="bcb4a209-16be-4a00-b79d-bd72edfd6813" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun netValue(price, quantity) = price*quantity 
+---
+payload map (order) -> 
+    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\orders\filled:max-the-mule-broker-api-config">
-        <logger level="INFO" message="get:\orders\filled:max-the-mule-broker-api-config" />
+		<db:select doc:name="Select Filled Orders" doc:id="af6bb140-9f31-49a5-a6fa-0aea039066b3" config-ref="Database_Config" >
+			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Filled';</db:sql>
+		</db:select>
+		<ee:transform doc:name="Add Net Value" doc:id="b89047de-3e2b-4ad9-8d37-b462eed5e1e8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+fun netValue(price, quantity) = price*quantity 
+---
+payload map (order) -> 
+    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\orders:max-the-mule-broker-api-config">
-        <logger level="INFO" message="get:\orders:max-the-mule-broker-api-config" />
+		<db:select doc:name="Select All" doc:id="42b2d5d8-e549-4a81-a931-17320b2a26c8" config-ref="Database_Config">
+			<db:sql>SELECT * FROM ORDERS_HISTORY;</db:sql>
+		</db:select>
+		<ee:transform doc:name="To Json" doc:id="12d1ff7a-b122-482d-be80-f617595d12c0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\orders\pending:max-the-mule-broker-api-config">
-        <logger level="INFO" message="get:\orders\pending:max-the-mule-broker-api-config" />
+		<db:select doc:name="Select Pending Orders" doc:id="d470d187-7741-4aa1-bf25-2af761e55443" config-ref="Database_Config" >
+			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Pending';</db:sql>
+		</db:select>
+		<ee:transform doc:name="To Json" doc:id="b2449014-dcca-4d44-8ae7-480841894060" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="post:\orders\pending\buy:application\json:max-the-mule-broker-api-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
