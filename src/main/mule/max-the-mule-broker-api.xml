@@ -136,7 +136,17 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\orders\cancelled:max-the-mule-broker-api-config">
+    <flow name="get:\orders:max-the-mule-broker-api-config">
+		<db:select doc:name="Select All" doc:id="42b2d5d8-e549-4a81-a931-17320b2a26c8" config-ref="Database_Config">
+			<db:sql>SELECT * FROM ORDERS_HISTORY;</db:sql>
+		</db:select>
+		<ee:transform doc:name="To Json" doc:id="12d1ff7a-b122-482d-be80-f617595d12c0">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0 output application/json --- payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+	<flow name="get:\orders\cancelled:max-the-mule-broker-api-config">
 		<db:select doc:name="Select Cancelled Orders" doc:id="c409257c-0324-40bb-bf4e-0ca57a978c21" config-ref="Database_Config">
 			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Cancelled';</db:sql>
 		</db:select>
@@ -146,7 +156,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
 			</ee:message>
 		</ee:transform>
     </flow>
-    <flow name="get:\orders\filled:max-the-mule-broker-api-config">
+	<flow name="get:\orders\filled:max-the-mule-broker-api-config">
 		<db:select doc:name="Select Filled Orders" doc:id="af6bb140-9f31-49a5-a6fa-0aea039066b3" config-ref="Database_Config" >
 			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Filled';</db:sql>
 		</db:select>
@@ -162,23 +172,13 @@ payload map (order) ->
 			</ee:message>
 		</ee:transform>
     </flow>
-    <flow name="get:\orders:max-the-mule-broker-api-config">
-		<db:select doc:name="Select All" doc:id="42b2d5d8-e549-4a81-a931-17320b2a26c8" config-ref="Database_Config">
-			<db:sql>SELECT * FROM ORDERS_HISTORY;</db:sql>
-		</db:select>
-		<ee:transform doc:name="To Json" doc:id="12d1ff7a-b122-482d-be80-f617595d12c0" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0 output application/json --- payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-    </flow>
     <flow name="get:\orders\pending:max-the-mule-broker-api-config">
-		<db:select doc:name="Select Pending Orders" doc:id="d470d187-7741-4aa1-bf25-2af761e55443" config-ref="Database_Config" >
-			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Pending';</db:sql>
+		<db:select doc:name="Select Pending Orders" doc:id="d470d187-7741-4aa1-bf25-2af761e55443" config-ref="Database_Config">
+			<db:sql>SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Pending';</db:sql>
 		</db:select>
-		<ee:transform doc:name="To Json" doc:id="b2449014-dcca-4d44-8ae7-480841894060" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0 output application/json --- payload]]>
+		<ee:transform doc:name="To Json" doc:id="b2449014-dcca-4d44-8ae7-480841894060">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0 output application/json --- payload]]>
 				</ee:set-payload>
 			</ee:message>
 		</ee:transform>
