@@ -1,0 +1,111 @@
+#%RAML 1.0
+title: max-the-mule-broker-api
+baseUri: http://localhost:8081/{version}
+version: v1
+ 
+/orders:
+  get:
+    description: Retrieve all the orders data
+    responses:
+      200:
+        body:
+          application/json:
+            type: Order[]
+  /filled:              
+    get:
+      description: Retrieve all the 'filled' orders data, including the net amount of each transaction
+      responses:
+        200:
+          body:
+            application/json:
+              type: Order[]
+
+  /cancelled:              
+    get:
+      description: Retrieve all the 'cancelled' orders data
+      responses:
+        200:
+          body:
+            application/json:
+              type: Order[]
+
+  /pending:              
+    get:
+      description: Retrieve all the 'cancelled' orders data
+      responses:
+        200:
+          body:
+            application/json:
+              type: Order[]
+
+    /buy:
+      post:
+        description: Creates a pending order set with the BUY action.
+        body: 
+          application/json:
+            type: BaseOrder
+        is: [responseMessage]
+    /sell:
+      post:
+        description: Creates a pending order set with the SELL action.
+        body: 
+          application/json:
+            type: BaseOrder
+        is: [responseMessage]
+
+traits: 
+  responseMessage:
+    responses: 
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+                "message":"<<resourcePathName>> order created"
+              }        
+        
+types:
+  BaseOrder:
+    type: object
+    properties:
+      PRICE: string
+      QUANTITY: number
+      SYMBOL: string
+    example:
+      PRICE: "205.21"
+      QUANTITY: 50
+      SYMBOL: SPY
+
+  Order:
+    type: BaseOrder
+    properties:
+      ACTION: 
+        type: string
+        enum: [BUY, SELL]
+      ORDER_DATE: datetime-only
+      STATUS:
+        type: string
+        enum: [Cancelled, Filled, Pending]
+      TX_NUMBER: number
+    example:
+      ACTION: BUY
+      PRICE: "205.21"
+      ORDER_DATE: "2015-12-28T15:06:25"
+      STATUS: Filled
+      TX_NUMBER: 1
+      QUANTITY: 50
+      SYMBOL: SPY
+      
+  FilledOrder:
+    type: Order
+    properties:
+      NET_VALUE: number
+    example:
+      ACTION: BUY
+      PRICE: "20"
+      ORDER_DATE: "2015-12-28T15:06:25"
+      STATUS: Filled
+      TX_NUMBER: 1
+      QUANTITY: 5
+      SYMBOL: SPY
+      NET_VALUE: -100
