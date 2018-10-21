@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
     <http:listener-config name="max-the-mule-broker-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
@@ -136,17 +137,12 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         </error-handler>
     </flow>
     <flow name="get:\orders\cancelled:max-the-mule-broker-api-config">
-		<db:select doc:name="Select Cancelled Orders" doc:id="c409257c-0324-40bb-bf4e-0ca57a978c21" config-ref="Database_Config" >
+		<db:select doc:name="Select Cancelled Orders" doc:id="c409257c-0324-40bb-bf4e-0ca57a978c21" config-ref="Database_Config">
 			<db:sql >SELECT * FROM ORDERS_HISTORY WHERE STATUS = 'Cancelled';</db:sql>
 		</db:select>
-		<ee:transform doc:name="Copy_of_Add Net Value" doc:id="bcb4a209-16be-4a00-b79d-bd72edfd6813" >
+		<ee:transform doc:name="To Json" doc:id="7889cabe-c792-4478-96ff-e96cd93262f2" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
-fun netValue(price, quantity) = price*quantity 
----
-payload map (order) -> 
-    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]></ee:set-payload>
+				<ee:set-payload ><![CDATA[%dw 2.0 output application/json --- payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
     </flow>
@@ -157,11 +153,11 @@ payload map (order) ->
 		<ee:transform doc:name="Add Net Value" doc:id="b89047de-3e2b-4ad9-8d37-b462eed5e1e8">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
-					output application/json
-					fun netValue(price, quantity) = price*quantity 
-					---
-					payload map (order) -> 
-					    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]>
+output application/json
+fun netValue(price, quantity) = price*quantity 
+---
+payload map (order) -> 
+    order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]>
     				</ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -188,30 +184,34 @@ payload map (order) ->
 		</ee:transform>
     </flow>
     <flow name="post:\orders\pending\buy:application\json:max-the-mule-broker-api-config">
-        <choice doc:name="Choice" doc:id="6ac61f3a-5bbf-4ab2-9823-1f4c6da14395" />
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="257c4803-a1e2-4ddb-891d-601d2bbaf8e4">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-					output application/json
-					fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
-					---
-					{
-						'date' : timeNow(), 
-						'symbol' : payload.SYMBOL, 
-						'quantity' : payload.QUANTITY, 
-						'price' : payload.PRICE
-					}
-					]]>
-				</ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="Validate Order" doc:id="da64cf12-f143-4cd3-a1a7-68c467c8644d" name="max-the-mule-broker-validate-new-order"/>
+		<ee:transform doc:name="Transform Message" doc:id="fb13a33d-3757-4144-9729-bf7f8248ece7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
+---
+{
+	'date' : timeNow(), 
+	'symbol' : payload.SYMBOL, 
+	'quantity' : payload.QUANTITY, 
+	'price' : payload.PRICE
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert Buy Order" doc:id="0cac5ce2-365d-4802-b358-3a5f1f81c21f" config-ref="Database_Config">
+			<db:sql >INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, 'BUY', 'Pending', :symbol, :quantity, :price);
+</db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
 		<!-- <db:insert doc:name="Insert" doc:id="20a058d2-e1a1-4dd4-9963-56d4d2cd870b" config-ref="Database_Config">
 			<db:sql > INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, 'BUY', 'Pending', :symbol, :quantity, :price);</db:sql>
 			<db:input-parameters ><![CDATA[#[ {'date' : now, 'symbol' : payload.SYMBOL, 'quantity' : payload.QUANTITY, 'price' : payload.PRICE}]]]></db:input-parameters>
 		</db:insert> -->
     </flow>
     <flow name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+        <flow-ref doc:name="Validate Order" doc:id="b71defd5-4aae-4b62-ab19-1d2d38265015" name="max-the-mule-broker-validate-new-order" />
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 					output application/json
@@ -223,4 +223,9 @@ payload map (order) ->
             </ee:message>
         </ee:transform>
     </flow>
+	<flow name="max-the-mule-broker-validate-new-order" doc:id="df8e0a8e-6afb-4031-9746-18e49458d6bd" >
+		<validation:matches-regex doc:name="Symbol validation" doc:id="4958c489-625e-4269-8d92-e31a2cbd7c57" value="#[payload.SYMBOL]" regex="[A-Z]{3}" />
+		<validation:is-number numberType="FLOAT" doc:name="Price validation" doc:id="76db2940-fc3a-4074-82b3-c3d9d9d8feca" value="#[payload.PRICE]" minValue="0" message="PRICE should be a non negative float number" />
+		<validation:is-number numberType="INTEGER" doc:name="Quantity validation" doc:id="09b59201-d677-40b4-b637-3223b72c2fc7" value="#[payload.QUANTITY]" minValue="1" message="QUANTITY should be a positive integer number" />
+	</flow>
 </mule>
