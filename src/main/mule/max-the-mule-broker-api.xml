@@ -209,9 +209,9 @@ fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
 			<db:input-parameters ><![CDATA[#[ {'date' : now, 'symbol' : payload.SYMBOL, 'quantity' : payload.QUANTITY, 'price' : payload.PRICE}]]]></db:input-parameters>
 		</db:insert> -->
     </flow>
-    <flow name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config">
+	<flow name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config">
         <flow-ref doc:name="Validate Order" doc:id="b71defd5-4aae-4b62-ab19-1d2d38265015" name="max-the-mule-broker-validate-new-order" />
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="450ae9dd-47e6-405a-b332-a6105a70cf96">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 					output application/json
@@ -222,6 +222,11 @@ fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
 				</ee:set-payload>
             </ee:message>
         </ee:transform>
+		<db:insert doc:name="Insert Sell Order" doc:id="009e67fd-46b7-47f8-9f03-8500dcae93a5" config-ref="Database_Config" >
+			<db:sql >INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, 'SELL', 'Pending', :symbol, :quantity, :price);
+</db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
     </flow>
 	<flow name="max-the-mule-broker-validate-new-order" doc:id="df8e0a8e-6afb-4031-9746-18e49458d6bd" >
 		<validation:matches-regex doc:name="Symbol validation" doc:id="4958c489-625e-4269-8d92-e31a2cbd7c57" value="#[payload.SYMBOL]" regex="[A-Z]{3}" />
