@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
     </http:listener-config>
     <apikit:config name="max-the-mule-broker-api-config" raml="max-the-mule-broker-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <db:config name="Database_Config" doc:name="Database Config" doc:id="5ff9a8e8-ace2-4fb0-9e4e-6dbf749c9dab" >
-		<db:my-sql-connection host="mysql-baservices.cvfzfbm5lfp0.us-west-2.rds.amazonaws.com" port="3306" user="msbaservices" password="OnB0ardMul3!" database="TRAINING" />
+		<db:my-sql-connection host="mysql-baservices.cvfzfbm5lfp0.us-west-2.rds.amazonaws.com" port="3306" user="${db.username}" password="${db.password}" database="TRAINING" />
 	</db:config>
 	<flow name="max-the-mule-broker-api-main">
         <http:listener config-ref="max-the-mule-broker-api-httpListenerConfig" path="/api/*">

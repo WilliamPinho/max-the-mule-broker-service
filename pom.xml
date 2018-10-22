@@ -49,6 +49,10 @@
                     </execution>
                 </executions>
                 <configuration>
+                		<systemPropertyVariables>
+                			<db.username>foo</db.username>
+                			<db.password>bar</db.password>
+                		</systemPropertyVariables>
                     <coverage>
                         <runCoverage>true</runCoverage>
                         <formats>
