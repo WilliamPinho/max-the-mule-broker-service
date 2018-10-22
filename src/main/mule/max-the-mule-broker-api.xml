@@ -132,6 +132,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\orders:max-the-mule-broker-api-config">
+		<set-variable value="#[attributes.queryParams.'net-value']" doc:name="Set Variable" doc:id="e4fe49fe-f318-4cd1-af87-b2a508417e4f" variableName="netValue"/>
 		<choice doc:name="Choice" doc:id="7aa9651c-56c0-481d-b909-fbcef3135f4e" >
 			<when expression="#[isEmpty(attributes.queryParams.status)]" >
 				<db:select doc:name="Select All Orders" doc:id="520a0972-5994-46f3-8e4c-6c0e1761d439" config-ref="Database_Config">
@@ -139,11 +140,15 @@ output application/json
 				</db:select>
 			</when>
 			<otherwise>
-				<flow-ref doc:name="Flow Reference" doc:id="e310211d-6570-4a79-a249-5b2a3f14306e" />
+				<validation:matches-regex doc:name="Validate status" doc:id="841d194d-f82a-4af3-8ef5-25f94efe3841" value="#[attributes.queryParams.status]" regex="(filled|canceled|pending)" message="#[lower(attributes.queryParams.status)]" />
+				<db:select doc:name="Select Order By Status " doc:id="2b6a7d0f-3cff-4cf5-85ef-e42bc285b606" config-ref="Database_Config">
+			<db:sql>SELECT * FROM ORDERS_HISTORY WHERE STATUS = :status;</db:sql>
+					<db:input-parameters><![CDATA[#[{ "status": dw::core::Strings::capitalize(attributes.queryParams.status) }]]]></db:input-parameters>
+		</db:select>
 			</otherwise>
 		</choice>
-		<choice doc:name="Choice" doc:id="125ab17c-fbe2-420a-875a-71efae8343b2" >
-			<when expression='#[attributes.queryParams.status == "filled"]'>
+		<choice doc:name="Choice" doc:id="125ab17c-fbe2-420a-875a-71efae8343b2">
+			<when expression='#[vars.netValue == "true"]'>
 				<ee:transform doc:name="To Json with Net Value" doc:id="5d393603-17ca-495f-8cdf-82696622afd6">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -154,7 +159,7 @@ payload map (order) -> order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANT
 					</ee:message>
 				</ee:transform>
 			</when>
-			<otherwise >
+			<otherwise>
 				<ee:transform doc:name="To Json" doc:id="62869af5-961e-469b-9230-f7d516c4b505">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -166,13 +171,6 @@ payload]]></ee:set-payload>
 			</otherwise>
 		</choice>
     </flow>
-	<flow name="max-the-mule-broker-apiFlow" doc:id="6e326b33-fb08-4e51-8957-9a9248df59d8" >
-		<validation:matches-regex doc:name="Validate status" doc:id="841d194d-f82a-4af3-8ef5-25f94efe3841" value="#[attributes.queryParams.status]" regex="(filled|canceled|pending)" message="#[lower(attributes.queryParams.status)]" />
-		<db:select doc:name="Select Order By Status " doc:id="2b6a7d0f-3cff-4cf5-85ef-e42bc285b606" config-ref="Database_Config">
-			<db:sql>SELECT * FROM ORDERS_HISTORY WHERE STATUS = :status;</db:sql>
-					<db:input-parameters><![CDATA[#[{ "status": dw::core::Strings::capitalize(attributes.queryParams.status) }]]]></db:input-parameters>
-		</db:select>
-	</flow>
 	<flow name="post:\orders:application\json:max-the-mule-broker-api-config">
         <flow-ref doc:name="New Order Validation Flow" doc:id="e9c8d7d3-1c61-4100-94cc-a759ee74632b" name="validate-new-order-request"/>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
