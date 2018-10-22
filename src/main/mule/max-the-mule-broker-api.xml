@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     </http:listener-config>
     <apikit:config name="max-the-mule-broker-api-config" raml="max-the-mule-broker-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="e38f664f-cfbb-4c87-bd23-c6f07e9eab3f">
-		<db:my-sql-connection host="mysql-baservices.cvfzfbm5lfp0.us-west-2.rds.amazonaws.com" port="3306" user="msbaservices" password="OnB0ardMul3!" database="TRAINING" />
+		<db:my-sql-connection host="mysql-baservices.cvfzfbm5lfp0.us-west-2.rds.amazonaws.com" port="3306" user="${db.username}" password="${db.password}" database="TRAINING" />
 	</db:config>
 	<flow name="max-the-mule-broker-api-main">
         <http:listener config-ref="max-the-mule-broker-api-httpListenerConfig" path="/api/*">
@@ -140,10 +140,9 @@ output application/json
 				</db:select>
 			</when>
 			<otherwise>
-				<validation:matches-regex doc:name="Validate status" doc:id="841d194d-f82a-4af3-8ef5-25f94efe3841" value="#[attributes.queryParams.status]" regex="(filled|canceled|pending)" message="#[lower(attributes.queryParams.status)]" />
-				<db:select doc:name="Select Order By Status " doc:id="2b6a7d0f-3cff-4cf5-85ef-e42bc285b606" config-ref="Database_Config">
+				<validation:matches-regex doc:name="Validate status" doc:id="841d194d-f82a-4af3-8ef5-25f94efe3841" value="#[attributes.queryParams.status]" regex="(filled|cancelled|pending)" message="#[lower(attributes.queryParams.status)]" />
+				<db:select doc:name="Select Order By Status" doc:id="2b6a7d0f-3cff-4cf5-85ef-e42bc285b606" config-ref="Database_Config">
 			<db:sql>SELECT * FROM ORDERS_HISTORY WHERE STATUS = :status;</db:sql>
-					<db:input-parameters><![CDATA[#[{ "status": dw::core::Strings::capitalize(attributes.queryParams.status) }]]]></db:input-parameters>
 		</db:select>
 			</otherwise>
 		</choice>
@@ -199,7 +198,7 @@ fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
 		</db:insert>
 	</flow>
 	<flow name="validate-new-order-request" doc:id="ab2b5a8d-ce43-4b17-9c35-2653ad8470c3">
-		<validation:is-true doc:name="Action validation" doc:id="314892dd-8043-4fe9-9d7d-9061f79b809f" expression='#[["BUY", "SELL"] contains upper(payload.ACTION)]'/>
+		<validation:is-true doc:name="Action validation" doc:id="314892dd-8043-4fe9-9d7d-9061f79b809f" expression='#[["buy", "sell"] contains lower(payload.ACTION)]'/>
 		<validation:matches-regex doc:name="Symbol validation" doc:id="4958c489-625e-4269-8d92-e31a2cbd7c57" value="#[payload.SYMBOL]" regex="[A-Z]{1,15}" />
 		<validation:is-number numberType="FLOAT" doc:name="Price validation" doc:id="76db2940-fc3a-4074-82b3-c3d9d9d8feca" value="#[payload.PRICE]" minValue="0" message="PRICE should be a non negative float number" />
 		<validation:is-number numberType="INTEGER" doc:name="Quantity validation" doc:id="09b59201-d677-40b4-b637-3223b72c2fc7" value="#[payload.QUANTITY]" minValue="1" message="QUANTITY should be a positive integer number" />
