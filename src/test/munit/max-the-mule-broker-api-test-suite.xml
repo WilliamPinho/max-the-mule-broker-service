@@ -120,8 +120,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<flow-ref doc:name="Copy_of_max-the-mule-broker-validate-new-order" doc:id="a613f7d1-7980-4767-8088-29f0acbf36f2" name="validate-new-order-request" />
 			</munit:execution>
 		</munit:test>
-	<munit:test name="test-suite-get:\orders\filled:max-the-mule-broker-api-configTest" description="Test" doc:id="54cf7541-1a50-4939-9458-cd967ddcee82" ignore="true">
+	<munit:test name="test-suite-get:\orders\filled:max-the-mule-broker-api-configTest" description="Test" doc:id="54cf7541-1a50-4939-9458-cd967ddcee82">
 		<munit:behavior>
+			<munit:set-event doc:name="Set Event" doc:id="5de858d0-9c94-4d20-823c-e022714fd87e" >
+				<munit:attributes value="#[{queryParams: {'net-value': 'true'}}]" />
+			</munit:set-event>
 			<munit-tools:mock-when doc:name="DB Mock" doc:id="b85e68b8-8ea6-4014-a175-ec8eb5c4e848" processor="db:select">
 				<munit-tools:with-attributes>
 					<munit-tools:with-attribute attributeName="config-ref" whereValue="#['Database_Config']" />
