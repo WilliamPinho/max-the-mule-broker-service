@@ -192,38 +192,41 @@ output application/json
 fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
 ---
 {
-	'date' : timeNow(), 
+	'date' : timeNow(),
+	'action': 'BUY', 
 	'symbol' : payload.SYMBOL, 
 	'quantity' : payload.QUANTITY, 
 	'price' : payload.PRICE
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<db:insert doc:name="Insert Buy Order" doc:id="0cac5ce2-365d-4802-b358-3a5f1f81c21f" config-ref="Database_Config">
-			<db:sql >INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, 'BUY', 'Pending', :symbol, :quantity, :price);
-</db:sql>
-			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
-		</db:insert> 
+		<flow-ref doc:name="DB Insert Order" doc:id="7bf334e5-4ea5-449f-b8b9-963014d7f560" name="max-the-mule-broker-api-insert-db"/> 
     </flow>
 	<flow name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config">
         <flow-ref doc:name="max-the-mule-broker-validate-new-order" doc:id="b71defd5-4aae-4b62-ab19-1d2d38265015" name="max-the-mule-broker-validate-new-order" />
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="450ae9dd-47e6-405a-b332-a6105a70cf96">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
-					output application/json
-					---
-					{
-					  message: "sell order created"
-					}]]>
+output application/json
+fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
+---
+{
+	'date' : timeNow(),
+	'action': 'SELL', 
+	'symbol' : payload.SYMBOL, 
+	'quantity' : payload.QUANTITY, 
+	'price' : payload.PRICE
+}]]>
 				</ee:set-payload>
             </ee:message>
         </ee:transform>
-		<db:insert doc:name="Insert Sell Order" doc:id="009e67fd-46b7-47f8-9f03-8500dcae93a5" config-ref="Database_Config" >
-			<db:sql >INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, 'SELL', 'Pending', :symbol, :quantity, :price);
-</db:sql>
-			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
-		</db:insert>
+		<flow-ref doc:name="DB Insert Order" doc:id="431f086a-c5af-48eb-9834-1add7e65f8ad" name="max-the-mule-broker-api-insert-db" />
     </flow>
+	<flow name="max-the-mule-broker-api-insert-db" doc:id="2a18f9ef-1148-4b8c-b2df-8906548df833" >
+		<db:insert doc:name="Insert Order" doc:id="b729fa55-be31-46ac-b8f5-b8c72e50c8ec" config-ref="Database_Config" >
+			<db:sql >INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, :action, 'Pending', :symbol, :quantity, :price);</db:sql>
+		</db:insert>
+	</flow>
 	<flow name="max-the-mule-broker-validate-new-order" doc:id="df8e0a8e-6afb-4031-9746-18e49458d6bd" >
 		<validation:matches-regex doc:name="Symbol validation" doc:id="4958c489-625e-4269-8d92-e31a2cbd7c57" value="#[payload.SYMBOL]" regex="[A-Z]{3}" />
 		<validation:is-number numberType="FLOAT" doc:name="Price validation" doc:id="76db2940-fc3a-4074-82b3-c3d9d9d8feca" value="#[payload.PRICE]" minValue="0" message="PRICE should be a non negative float number" />
