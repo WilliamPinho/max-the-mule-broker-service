@@ -38,7 +38,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<munit:test name="db-select-status" description="Select all elements based on status" doc:id="ef15e54e-cb05-417a-b600-4fd20ac02df9">
 			<munit:behavior>
 				<munit:set-event doc:name="Set Event" doc:id="f2fde215-5e1e-4f81-b5af-4365182e0927" >
-				<munit:attributes value="#[{queryParams: {'status': 'cancelled'}}]" />
+				<munit:attributes value="#[{queryParams: {'status': 'canceled'}}]" />
 			</munit:set-event>
 				<munit-tools:mock-when doc:name="Select By Status Database Mock" doc:id="42ad7f8c-b4af-4c31-b7fd-563441f5d4c5" processor="db:select">
 					<munit-tools:with-attributes>
@@ -75,7 +75,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<flow-ref doc:name="Flow-ref to post:\orders:application\json:max-the-mule-broker-api-config" doc:id="33fb9576-61a8-42c9-84ca-fdbfe699e774" name="post:\orders:application\json:max-the-mule-broker-api-config" />
 		</munit:execution>
 		<munit:validation>
-			<munit-tools:assert-that doc:name="Assert that" doc:id="4095a013-4d8d-4c33-ac61-98c532dcf4ff" expression="#[payload.'date']" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4095a013-4d8d-4c33-ac61-98c532dcf4ff" expression="#[payload]" is='#[MunitTools::equalTo({"message": "order created"})]'/>
 		</munit:validation>
 	</munit:test>
 	

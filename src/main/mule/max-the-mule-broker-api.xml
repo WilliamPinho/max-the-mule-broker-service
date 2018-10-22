@@ -140,9 +140,10 @@ output application/json
 				</db:select>
 			</when>
 			<otherwise>
-				<validation:matches-regex doc:name="Validate status" doc:id="841d194d-f82a-4af3-8ef5-25f94efe3841" value="#[attributes.queryParams.status]" regex="(filled|cancelled|pending)" message="#[lower(attributes.queryParams.status)]" />
+				<validation:matches-regex doc:name="Validate status" doc:id="841d194d-f82a-4af3-8ef5-25f94efe3841" value="#[attributes.queryParams.status]" regex="(filled|canceled|pending)" message="#[lower(attributes.queryParams.status)]" />
 				<db:select doc:name="Select Order By Status" doc:id="2b6a7d0f-3cff-4cf5-85ef-e42bc285b606" config-ref="Database_Config">
 			<db:sql>SELECT * FROM ORDERS_HISTORY WHERE STATUS = :status;</db:sql>
+					<db:input-parameters ><![CDATA[#[ {"status" : attributes.queryParams.status }]]]></db:input-parameters>
 		</db:select>
 			</otherwise>
 		</choice>
@@ -190,6 +191,14 @@ fun timeNow() = now() as String {format: "yyyy-MM-dd'T'HH:mm:ss"}
             </ee:message>
         </ee:transform>
 		<flow-ref doc:name="Database insert flow reference" doc:id="60ccc70d-7876-4404-86fa-70f691b38946" name="insert-new-order-db"/>
+		<ee:transform doc:name="To Json" doc:id="b9400d42-6947-4297-9975-aaaf18a7ae23">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{ "message": "order created" }]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
 	<flow name="insert-new-order-db" doc:id="82e4e811-b4ec-4aa5-8202-8842e9699f4a" >
 		<db:insert doc:name="Insert new order" doc:id="92e964b3-0169-4df3-89e8-9af5c39b7973" config-ref="Database_Config">

@@ -32,6 +32,18 @@
                             <artifactId>mysql-connector-java</artifactId>
                         </sharedLibrary>
                     </sharedLibraries>
+                    <cloudHubDeployment>
+                        <uri>https://anypoint.mulesoft.com</uri>
+                        <muleVersion>${app.runtime}</muleVersion>
+                        <username>${username}</username>
+                        <password>${password}</password>
+                        <applicationName>max-the-mule-broker-service</applicationName>
+                        <environment>Production</environment>
+                        <properties>
+                            <db.username>${db.username}</db.username>
+                            <db.password>${db.password}</db.password>
+                        </properties>
+                    </cloudHubDeployment>
                 </configuration>
 			</plugin>
 		<plugin>
