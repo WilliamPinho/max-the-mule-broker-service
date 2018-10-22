@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="max-the-mule-broker-api-test-suite.xml" />
+	<munit:test name="max-the-mule-broker-api-test-suite-get:\orders:max-the-mule-broker-api-configTest" description="Select all elements in the database" doc:id="30caf3ba-09a9-4707-bbfb-3b20abcd18cb" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Database Mock" doc:id="ed683c09-a067-458b-b928-1622dbf04b4a" processor="db:select">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute attributeName="config-ref" whereValue="#['Database_Config']"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['[{ &quot;a&quot;: &quot;b&quot; }]']" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\orders:max-the-mule-broker-api-config" doc:id="3e82ca75-d1ea-412e-adc1-2a6a052f58cd" name="get:\orders:max-the-mule-broker-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="02910283-ab6d-4944-a4ea-d9f82ec61081" expression="#[payload]" is="#[MunitTools::equalTo('[{ &quot;a&quot;: &quot;b&quot; }]')]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="max-the-mule-broker-api-test-suite-post:\orders:application\json:max-the-mule-broker-api-configTest" description="Test" doc:id="18def51c-86e3-45d1-8314-ed05e71d5662" ignore="true">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\orders:application\json:max-the-mule-broker-api-config" doc:id="33fb9576-61a8-42c9-84ca-fdbfe699e774" name="post:\orders:application\json:max-the-mule-broker-api-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="max-the-mule-broker-api-test-suite-insert-new-order-dbTest" description="Test" doc:id="9a9c8fc2-afc2-4952-b2f4-17e850ee909f" ignore="true">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to insert-new-order-db" doc:id="e206f97f-dba0-4166-9797-d8e2f380d89b" name="insert-new-order-db"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="max-the-mule-broker-api-test-suite-validate-new-order-requestTest" description="Test" doc:id="353bde90-bb1a-43db-8429-87a9dbebd5af" ignore="true">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to validate-new-order-request" doc:id="98335187-9802-41d5-bb92-009c2e1ad1dc" name="validate-new-order-request"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>

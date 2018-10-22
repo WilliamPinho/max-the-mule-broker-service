@@ -6,52 +6,21 @@ version: v1
 /orders:
   get:
     description: Retrieve all the orders data
+    queryParameters:
+      status: 
+        type: Status
+        required: false
     responses:
       200:
         body:
           application/json:
             type: Order[]
-  /filled:              
-    get:
-      description: Retrieve all the 'filled' orders data, including the net amount of each transaction
-      responses:
-        200:
-          body:
-            application/json:
-              type: Order[]
-
-  /cancelled:              
-    get:
-      description: Retrieve all the 'cancelled' orders data
-      responses:
-        200:
-          body:
-            application/json:
-              type: Order[]
-
-  /pending:              
-    get:
-      description: Retrieve all the 'pending' orders data
-      responses:
-        200:
-          body:
-            application/json:
-              type: Order[]
-
-    /buy:
-      post:
-        description: Creates a pending order set with the BUY action.
-        body: 
-          application/json:
-            type: BaseOrder
-        is: [responseMessage]
-    /sell:
-      post:
-        description: Creates a pending order set with the SELL action.
-        body: 
-          application/json:
-            type: BaseOrder
-        is: [responseMessage]
+  post:
+    description: Creates a pending order set with the BUY action.
+    body: 
+      application/json:
+        type: BaseOrder
+    is: [responseMessage]
 
 traits: 
   responseMessage:
@@ -65,6 +34,22 @@ traits:
               }        
         
 types:
+  Order:
+    type: BaseOrder
+    properties:
+      ACTION: Action
+      ORDER_DATE: datetime-only
+      STATUS: Status
+      TX_NUMBER: number
+    example:
+      ACTION: buy
+      PRICE: "205.21"
+      ORDER_DATE: "2015-12-28T15:06:25"
+      STATUS: filled
+      TX_NUMBER: 1
+      QUANTITY: 50
+      SYMBOL: SPY
+      
   BaseOrder:
     type: object
     properties:
@@ -75,37 +60,11 @@ types:
       PRICE: "205.21"
       QUANTITY: 50
       SYMBOL: SPY
-
-  Order:
-    type: BaseOrder
-    properties:
-      ACTION: 
-        type: string
-        enum: [BUY, SELL]
-      ORDER_DATE: datetime-only
-      STATUS:
-        type: string
-        enum: [Cancelled, Filled, Pending]
-      TX_NUMBER: number
-    example:
-      ACTION: BUY
-      PRICE: "205.21"
-      ORDER_DATE: "2015-12-28T15:06:25"
-      STATUS: Filled
-      TX_NUMBER: 1
-      QUANTITY: 50
-      SYMBOL: SPY
-      
-  FilledOrder:
-    type: Order
-    properties:
-      NET_VALUE: number
-    example:
-      ACTION: BUY
-      PRICE: "20"
-      ORDER_DATE: "2015-12-28T15:06:25"
-      STATUS: Filled
-      TX_NUMBER: 1
-      QUANTITY: 5
-      SYMBOL: SPY
-      NET_VALUE: -100
+          
+  Action:
+    type: string
+    enum: [buy, sell]
+    
+  Status:
+    type: string
+    enum: [cancelled, filled, pending]  
