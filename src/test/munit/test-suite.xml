@@ -10,9 +10,9 @@
 		http://www.mulesoft.org/schema/mule/dbserver http://www.mulesoft.org/schema/mule/dbserver/current/mule-dbserver.xsd">
 	<munit:config name="test-suite.xml" />
 	
-	<munit:test name="test-suite-get:\orders:max-the-mule-broker-api-configTest" description="Test" doc:id="cdc18e16-c974-4622-9388-b4fb03eed48d">
+	<munit:test name="test-suite-get:\orders:max-the-mule-broker-api-config-test" description="Test" doc:id="cdc18e16-c974-4622-9388-b4fb03eed48d">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock DB" doc:id="fc0e6ced-ca13-4bcf-affd-ca6489279809" processor="db:select">
+			<munit-tools:mock-when doc:name="DB Mock" doc:id="fc0e6ced-ca13-4bcf-affd-ca6489279809" processor="db:select">
 				<munit-tools:with-attributes>
                 		<munit-tools:with-attribute attributeName="config-ref" whereValue="#['Database_Config']"/>
             		</munit-tools:with-attributes>
@@ -25,12 +25,12 @@
 			<flow-ref doc:name="get:\orders:max-the-mule-broker-api-config" doc:id="04f09003-9e34-4224-993d-05b182319181" name="get:\orders:max-the-mule-broker-api-config"/>
 		</munit:execution>
 		<munit:validation>
-	        <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(&quot;[{ 'ACTION': 'BUY', 'PRICE': 205.2100067138672, 'ORDER_DATE': '2015-12-28T15:06:25', 'STATUS':  'Pending', 'TX_NUMBER': 1, 'QUANTITY': 50, 'SYMBOL': 'SPY' }]&quot;)]"/>
+	        <munit-tools:assert-that expression="#[payload]" is="#[MunitTools::equalTo(&quot;[{ 'ACTION': 'BUY', 'PRICE': 205.2100067138672, 'ORDER_DATE': '2015-12-28T15:06:25', 'STATUS':  'Pending', 'TX_NUMBER': 1, 'QUANTITY': 50, 'SYMBOL': 'SPY' }]&quot;)]" doc:name="Assert Flow Output"/>
 	    </munit:validation>
 	</munit:test>
 	<munit:test name="test-suite-get:\orders\cancelled:max-the-mule-broker-api-configTest" description="Test" doc:id="ed66bbdf-42ae-4016-a885-dc5e7d682cad">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock DB" doc:id="5986ce6a-c83d-4dc8-9ff7-16e9f722834c" processor="db:select" >
+			<munit-tools:mock-when doc:name="DB Mock" doc:id="5986ce6a-c83d-4dc8-9ff7-16e9f722834c" processor="db:select" >
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute attributeName="config-ref" whereValue="#['Database_Config']" />
 				</munit-tools:with-attributes>
@@ -43,12 +43,12 @@
 			<flow-ref doc:name="get:\orders\cancelled:max-the-mule-broker-api-config" doc:id="fb9a9dca-eebd-4957-9dc5-c73511bfad4f" name="get:\orders\cancelled:max-the-mule-broker-api-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that" doc:id="e30eaf9a-066e-431d-a692-80397890bbbe" expression="#[payload]" is="#[MunitTools::equalTo(&quot;[{ 'ACTION': 'BUY', 'PRICE': 205.2100067138672, 'ORDER_DATE': '2015-12-28T15:06:25', 'STATUS':  'Cancelled', 'TX_NUMBER': 1, 'QUANTITY': 50, 'SYMBOL': 'SPY' }]&quot;)]" />
+			<munit-tools:assert-that doc:name="Assert Flow Output" doc:id="e30eaf9a-066e-431d-a692-80397890bbbe" expression="#[payload]" is="#[MunitTools::equalTo(&quot;[{ 'ACTION': 'BUY', 'PRICE': 205.2100067138672, 'ORDER_DATE': '2015-12-28T15:06:25', 'STATUS':  'Cancelled', 'TX_NUMBER': 1, 'QUANTITY': 50, 'SYMBOL': 'SPY' }]&quot;)]" />
 		</munit:validation>
 	</munit:test>
 	<munit:test name="test-suite-get:\orders\filled:max-the-mule-broker-api-configTest" description="Test" doc:id="54cf7541-1a50-4939-9458-cd967ddcee82">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock DB" doc:id="b85e68b8-8ea6-4014-a175-ec8eb5c4e848" processor="db:select" >
+			<munit-tools:mock-when doc:name="DB Mock" doc:id="b85e68b8-8ea6-4014-a175-ec8eb5c4e848" processor="db:select" >
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute attributeName="config-ref" whereValue="#['Database_Config']" />
 				</munit-tools:with-attributes>
@@ -61,12 +61,12 @@
 			<flow-ref doc:name="get:\orders\filled:max-the-mule-broker-api-config" doc:id="694c131f-bd67-46f8-ad4c-ad7bda9e49cf" name="get:\orders\filled:max-the-mule-broker-api-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that" doc:id="7777d695-466c-4453-b0a9-0fef4117fb7b" expression="#[payload[0].NET_VALUE]" is="#[MunitTools::equalTo(250.0)]" />
+			<munit-tools:assert-that doc:name="Assert Generated NET_VALUE" doc:id="7777d695-466c-4453-b0a9-0fef4117fb7b" expression="#[payload[0].NET_VALUE]" is="#[MunitTools::equalTo(250.0)]" />
 		</munit:validation>
 	</munit:test>
 	<munit:test name="test-suite-get:\orders\pending:max-the-mule-broker-api-configTest" description="Test" doc:id="0bb17c41-35ba-46ff-92e0-1b683ba7597e">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock DB" doc:id="e986677c-5269-403e-a393-793d9d2dc530" processor="db:select" >
+			<munit-tools:mock-when doc:name="DB Mock" doc:id="e986677c-5269-403e-a393-793d9d2dc530" processor="db:select" >
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute attributeName="config-ref" whereValue="#['Database_Config']" />
 				</munit-tools:with-attributes>
@@ -79,7 +79,7 @@
 			<flow-ref doc:name="get:\orders\pending:max-the-mule-broker-api-config" doc:id="2de158f7-3d25-4be5-be5c-7c3aa3febfea" name="get:\orders\pending:max-the-mule-broker-api-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that" doc:id="a21ca47c-a8ad-44e4-97c6-ca7f81472f3a" expression="#[payload]" is="#[MunitTools::equalTo(&quot;[{ 'ACTION': 'BUY', 'PRICE': 205.2100067138672, 'ORDER_DATE': '2015-12-28T15:06:25', 'STATUS':  'Pending', 'TX_NUMBER': 1, 'QUANTITY': 50, 'SYMBOL': 'SPY' }]&quot;)]" />
+			<munit-tools:assert-that doc:name="Assert Flow Output" doc:id="a21ca47c-a8ad-44e4-97c6-ca7f81472f3a" expression="#[payload]" is="#[MunitTools::equalTo(&quot;[{ 'ACTION': 'BUY', 'PRICE': 205.2100067138672, 'ORDER_DATE': '2015-12-28T15:06:25', 'STATUS':  'Pending', 'TX_NUMBER': 1, 'QUANTITY': 50, 'SYMBOL': 'SPY' }]&quot;)]" />
 		</munit:validation>
 	</munit:test>
 	<munit:test name="test-suite-post:\orders\pending\buy:application\json:max-the-mule-broker-api-configTest" description="Test" doc:id="a8229c93-c6d9-4f7e-a893-cd9958391862">
@@ -87,7 +87,7 @@
 			<munit:set-event doc:name="Set Event" doc:id="7a81d1ee-9faf-4219-af40-f7b929e24432">
 				<munit:payload value='{ "PRICE": "20", "QUANTITY": 50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
 			</munit:set-event>
-			<munit-tools:mock-when doc:name="Mock DB Insert Order Flow Ref" doc:id="fc0e6ced-ca13-4bcf-affd-ca6489279809" processor="flow-ref">
+			<munit-tools:mock-when doc:name="DB Insert Order Flow Ref Mock " doc:id="fc0e6ced-ca13-4bcf-affd-ca6489279809" processor="flow-ref">
 				<munit-tools:with-attributes>
                 		<munit-tools:with-attribute attributeName="name" whereValue="#['max-the-mule-broker-api-insert-db']"/>
 
@@ -102,7 +102,7 @@
 			<flow-ref doc:name="post:\orders\pending\buy:application\json:max-the-mule-broker-api-config" doc:id="24f1ffad-fa25-4858-a7dc-914db7b786fe" name="post:\orders\pending\buy:application\json:max-the-mule-broker-api-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that" doc:id="09010ffe-96d5-4ba6-89e2-bed009f6d5ab" expression="#[payload.message]" is='#[MunitTools::equalTo("buy order created")]'/>
+			<munit-tools:assert-that doc:name="Assert Created Message" doc:id="09010ffe-96d5-4ba6-89e2-bed009f6d5ab" expression="#[payload.message]" is='#[MunitTools::equalTo("buy order created")]'/>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="test-suite-post:\orders\pending\sell:application\json:max-the-mule-broker-api-configTest" description="Test" doc:id="70c453b8-8909-4466-829d-4ea5f2325b6c">
@@ -110,7 +110,7 @@
 			<munit:set-event doc:name="Set Event" doc:id="ca1d80ea-0a1d-44bb-b047-4da4f5b5b228" >
 				<munit:payload value='{ "PRICE": "20", "QUANTITY": 50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
 			</munit:set-event>
-			<munit-tools:mock-when doc:name="Mock DB Insert Order Flow Ref" doc:id="faa7b468-51bd-4e3c-931f-5c40771bb1af" processor="flow-ref" >
+			<munit-tools:mock-when doc:name="DB Insert Order Flow Ref Mock" doc:id="faa7b468-51bd-4e3c-931f-5c40771bb1af" processor="flow-ref" >
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute attributeName="name" whereValue="#['max-the-mule-broker-api-insert-db']" />
 				</munit-tools:with-attributes>
@@ -123,12 +123,12 @@
 			<flow-ref doc:name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config" doc:id="824ee868-802e-4f61-81b7-dc98d2f15780" name="post:\orders\pending\sell:application\json:max-the-mule-broker-api-config"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that" doc:id="c0f26baf-3a60-4115-9253-e3ada361175c" expression="#[payload.message]" is='#[MunitTools::equalTo("sell order created")]' />
+			<munit-tools:assert-that doc:name="Assert Created Message" doc:id="c0f26baf-3a60-4115-9253-e3ada361175c" expression="#[payload.message]" is='#[MunitTools::equalTo("sell order created")]' />
 		</munit:validation>
 	</munit:test>
-	<munit:test name="test-suite-max-the-mule-broker-validate-new-order-valid" description="Test" doc:id="69d49b68-7a3f-4412-b72b-e13e872bd50a">
+	<munit:test name="new-order-valid-test" description="Test" doc:id="69d49b68-7a3f-4412-b72b-e13e872bd50a">
 		<munit:behavior >
-			<munit:set-event doc:name="Set Event" doc:id="4d361647-b1f4-457d-8817-6f522b9e7af0" >
+			<munit:set-event doc:name="Set Valid Order" doc:id="4d361647-b1f4-457d-8817-6f522b9e7af0" >
 				<munit:payload value='{ "PRICE": "205.21", "QUANTITY": 50, "SYMBOL": "BBB" }' encoding="UTF-8" mediaType="application/json" />
 			</munit:set-event>
 		</munit:behavior>
@@ -136,9 +136,9 @@
 			<flow-ref doc:name="max-the-mule-broker-validate-new-order" doc:id="d3da7b27-b99b-45cf-aac7-e6000f0aad87" name="max-the-mule-broker-validate-new-order"/>
 		</munit:execution>
 	</munit:test>
-	<munit:test name="test-suite-max-the-mule-broker-validate-new-order-invalid-price" description="MUnit Test" doc:id="72b68a2b-4882-4c53-9f04-74c896c64be5" expectedErrorType="VALIDATION:INVALID_NUMBER">
+	<munit:test name="validate-new-order-invalid-price-test" description="MUnit Test" doc:id="72b68a2b-4882-4c53-9f04-74c896c64be5" expectedErrorType="VALIDATION:INVALID_NUMBER">
 		<munit:behavior >
-			<munit:set-event doc:name="Set Event Negative Price" doc:id="a27863c4-7ea2-445d-a48a-e210bc70575d" >
+			<munit:set-event doc:name="Set Order Negative Price" doc:id="a27863c4-7ea2-445d-a48a-e210bc70575d" >
 				<munit:payload value='{ "PRICE": "-20", "QUANTITY": 50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
 			</munit:set-event>
 		</munit:behavior>
@@ -146,9 +146,9 @@
 			<flow-ref doc:name="max-the-mule-broker-validate-new-order" doc:id="5d1539df-2e00-411f-9670-5d3e11cde002" name="max-the-mule-broker-validate-new-order" />
 		</munit:execution>
 	</munit:test>
-	<munit:test name="test-suite-max-the-mule-broker-validate-new-order-invalid-quantity" description="MUnit Test" doc:id="fb26fed6-f6d7-481c-895f-0ce49af29c8c" expectedErrorType="VALIDATION:INVALID_NUMBER">
+	<munit:test name="validate-new-order-invalid-quantity-test" description="MUnit Test" doc:id="fb26fed6-f6d7-481c-895f-0ce49af29c8c" expectedErrorType="VALIDATION:INVALID_NUMBER">
 		<munit:behavior >
-			<munit:set-event doc:name="Set Event Negative Quantity" doc:id="26f08570-740b-44de-b087-374ced5434e0" >
+			<munit:set-event doc:name="Set Order Negative Quantity" doc:id="26f08570-740b-44de-b087-374ced5434e0" >
 				<munit:payload value='{ "PRICE": "20", "QUANTITY": -50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
 			</munit:set-event>
 		</munit:behavior>
@@ -156,5 +156,15 @@
 			<flow-ref doc:name="max-the-mule-broker-validate-new-order" doc:id="0683830b-e193-45b2-b1fa-9c898f30ba2d" name="max-the-mule-broker-validate-new-order" />
 		</munit:execution>
 	</munit:test>
+	<munit:test name="validate-new-order-invalid-symbol-test" description="MUnit Test" doc:id="487f455f-9e6f-438d-b9ed-36dcf055f235" expectedErrorType="VALIDATION:MISMATCH">
+			<munit:behavior>
+				<munit:set-event doc:name="Set Invalid Symbol" doc:id="0ad8f114-765c-4a09-a7af-8df5a83c9205">
+					<munit:payload value='{ "PRICE": "20", "QUANTITY": -50, "SYMBOL": "%411111" }' encoding="UTF-8" mediaType="application/json" />
+				</munit:set-event>
+			</munit:behavior>
+			<munit:execution>
+				<flow-ref doc:name="Copy_of_max-the-mule-broker-validate-new-order" doc:id="8e35a908-bf30-45f4-b795-8c0ad893501c" name="max-the-mule-broker-validate-new-order" />
+			</munit:execution>
+		</munit:test>
 
 </mule>
