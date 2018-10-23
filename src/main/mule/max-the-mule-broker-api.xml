@@ -132,7 +132,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\orders:max-the-mule-broker-api-config">
-		<set-variable value="#[attributes.queryParams.'net-value']" doc:name="Set Variable" doc:id="e4fe49fe-f318-4cd1-af87-b2a508417e4f" variableName="netValue"/>
+		<set-variable value="#[attributes.queryParams.'net-value']" doc:name="Set netValue Variable" doc:id="e4fe49fe-f318-4cd1-af87-b2a508417e4f" variableName="netValue"/>
 		<choice doc:name="Choice" doc:id="7aa9651c-56c0-481d-b909-fbcef3135f4e" >
 			<when expression="#[isEmpty(attributes.queryParams.status)]" >
 				<db:select doc:name="Select All Orders" doc:id="520a0972-5994-46f3-8e4c-6c0e1761d439" config-ref="Database_Config">
@@ -155,7 +155,8 @@ output application/json
 output application/json
 fun netValue(price, quantity) = price*quantity 
 ---
-payload map (order) -> order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]></ee:set-payload>
+payload map (order) -> 
+	order ++ { 'NET_VALUE': netValue(order.PRICE, order.QUANTITY) }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
 			</when>
@@ -203,7 +204,6 @@ output application/json
 	<flow name="insert-new-order-db" doc:id="82e4e811-b4ec-4aa5-8202-8842e9699f4a" >
 		<db:insert doc:name="Insert new order" doc:id="92e964b3-0169-4df3-89e8-9af5c39b7973" config-ref="Database_Config">
 			<db:sql>INSERT INTO ORDERS_HISTORY(ORDER_DATE, ACTION,STATUS, SYMBOL, QUANTITY, PRICE) VALUES (:date, :action, 'Pending', :symbol, :quantity, :price);</db:sql>
-			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
 		</db:insert>
 	</flow>
 	<flow name="validate-new-order-request" doc:id="ab2b5a8d-ce43-4b17-9c35-2653ad8470c3">

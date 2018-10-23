@@ -9,7 +9,7 @@
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<munit:config name="max-the-mule-broker-api-test-suite.xml" />
-	<munit:test name="db-select-all" description="Select all elements in the database" doc:id="30caf3ba-09a9-4707-bbfb-3b20abcd18cb">
+	<munit:test name="db-select-all" description="Select all orders in the database" doc:id="30caf3ba-09a9-4707-bbfb-3b20abcd18cb">
 		<munit:behavior >
 			<munit-tools:mock-when doc:name="Database Mock" doc:id="ed683c09-a067-458b-b928-1622dbf04b4a" processor="db:select">
 				<munit-tools:with-attributes>
@@ -35,7 +35,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<munit-tools:assert-that doc:name="Assert that" doc:id="02910283-ab6d-4944-a4ea-d9f82ec61081" expression="#[payload]" is="#[MunitTools::equalTo('[{ &quot;a&quot;: &quot;b&quot; }]')]" />
 		</munit:validation>
 	</munit:test>
-	<munit:test name="db-select-status" description="Select all elements based on status" doc:id="ef15e54e-cb05-417a-b600-4fd20ac02df9">
+	<munit:test name="db-select-status" description="Select all orders that match a status" doc:id="ef15e54e-cb05-417a-b600-4fd20ac02df9">
 			<munit:behavior>
 				<munit:set-event doc:name="Set Event" doc:id="f2fde215-5e1e-4f81-b5af-4365182e0927" >
 				<munit:attributes value="#[{queryParams: {'status': 'canceled'}}]" />
@@ -60,7 +60,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			</munit-tools:verify-call>
 			</munit:validation>
 		</munit:test>
-	<munit:test name="max-the-mule-broker-api-test-suite-post:\orders:application\json:max-the-mule-broker-api-configTest" description="Test" doc:id="18def51c-86e3-45d1-8314-ed05e71d5662">
+	<munit:test name="create-new-order" description="Test the correct path when creating a new order" doc:id="18def51c-86e3-45d1-8314-ed05e71d5662">
 		<munit:behavior >
 			<munit:set-event doc:name="Set Event" doc:id="b0df21bd-2742-4916-a095-5c73a9faf617">
 				<munit:payload value='{ "ACTION": "BUY", "PRICE": "20", "QUANTITY": 50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
@@ -80,7 +80,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</munit:test>
 	
 	
-		<munit:test name="validate-new-order-invalid-price-test" description="MUnit Test" doc:id="72b68a2b-4882-4c53-9f04-74c896c64be5" expectedErrorType="VALIDATION:INVALID_NUMBER">
+		<munit:test name="validate-new-order-invalid-price-test" description="Tries to create an order with an invalid price and fails" doc:id="72b68a2b-4882-4c53-9f04-74c896c64be5" expectedErrorType="VALIDATION:INVALID_NUMBER">
 		<munit:behavior >
 			<munit:set-event doc:name="Set Order Negative Price" doc:id="a27863c4-7ea2-445d-a48a-e210bc70575d" >
 				<munit:payload value='{ "ACTION": "SELL", "PRICE": "-20", "QUANTITY": 50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
@@ -90,7 +90,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<flow-ref doc:name="max-the-mule-broker-validate-new-order" doc:id="5d1539df-2e00-411f-9670-5d3e11cde002" name="validate-new-order-request" />
 		</munit:execution>
 	</munit:test>
-	<munit:test name="validate-new-order-invalid-quantity-test" description="MUnit Test" doc:id="fb26fed6-f6d7-481c-895f-0ce49af29c8c" expectedErrorType="VALIDATION:INVALID_NUMBER">
+	<munit:test name="validate-new-order-invalid-quantity-test" description="Tries to create an order with an invalid quantity and fails" doc:id="fb26fed6-f6d7-481c-895f-0ce49af29c8c" expectedErrorType="VALIDATION:INVALID_NUMBER">
 		<munit:behavior >
 			<munit:set-event doc:name="Set Order Negative Quantity" doc:id="26f08570-740b-44de-b087-374ced5434e0" >
 				<munit:payload value='{ "ACTION": "SELL", "PRICE": "20", "QUANTITY": -50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
@@ -100,7 +100,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<flow-ref doc:name="max-the-mule-broker-validate-new-order" doc:id="0683830b-e193-45b2-b1fa-9c898f30ba2d" name="validate-new-order-request" />
 		</munit:execution>
 	</munit:test>
-	<munit:test name="validate-new-order-invalid-symbol-test" description="MUnit Test" doc:id="487f455f-9e6f-438d-b9ed-36dcf055f235" expectedErrorType="VALIDATION:MISMATCH">
+	<munit:test name="validate-new-order-invalid-symbol-test" description="Tries to create an order with an invalid symbol and fails" doc:id="487f455f-9e6f-438d-b9ed-36dcf055f235" expectedErrorType="VALIDATION:MISMATCH">
 			<munit:behavior>
 				<munit:set-event doc:name="Set Invalid Symbol" doc:id="0ad8f114-765c-4a09-a7af-8df5a83c9205">
 					<munit:payload value='{ "ACTION": "SELL", "PRICE": "20", "QUANTITY": -50, "SYMBOL": "%411111" }' encoding="UTF-8" mediaType="application/json" />
@@ -110,9 +110,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<flow-ref doc:name="Copy_of_max-the-mule-broker-validate-new-order" doc:id="8e35a908-bf30-45f4-b795-8c0ad893501c" name="validate-new-order-request" />
 			</munit:execution>
 		</munit:test>
-	<munit:test name="Copy_of_validate-new-order-invalid-price-test" description="MUnit Test" doc:id="9860c8fa-71ef-47b7-8446-f7468c082ec5" expectedErrorType="VALIDATION:INVALID_NUMBER">
+	<munit:test name="validate-new-order-invalid-action-test" description="Tries to create an order with an invalid action and fails" doc:id="9860c8fa-71ef-47b7-8446-f7468c082ec5" expectedErrorType="VALIDATION:INVALID_NUMBER">
 			<munit:behavior>
-				<munit:set-event doc:name="Copy_of_Set Order Negative Price" doc:id="a77afee1-869a-46f0-a2dc-2fcec9453c69">
+				<munit:set-event doc:name="Set Order Negative Price" doc:id="a77afee1-869a-46f0-a2dc-2fcec9453c69">
 					<munit:payload value='{ "ACTION": "BUY", "PRICE": "-20", "QUANTITY": 50, "SYMBOL": "ABC" }' encoding="UTF-8" mediaType="application/json" />
 				</munit:set-event>
 			</munit:behavior>
@@ -120,7 +120,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<flow-ref doc:name="Copy_of_max-the-mule-broker-validate-new-order" doc:id="a613f7d1-7980-4767-8088-29f0acbf36f2" name="validate-new-order-request" />
 			</munit:execution>
 		</munit:test>
-	<munit:test name="test-suite-get:\orders\filled:max-the-mule-broker-api-configTest" description="Test" doc:id="54cf7541-1a50-4939-9458-cd967ddcee82">
+	<munit:test name="generate-net-value" description="Retrieve an order with the generated net value" doc:id="54cf7541-1a50-4939-9458-cd967ddcee82">
 		<munit:behavior>
 			<munit:set-event doc:name="Set Event" doc:id="5de858d0-9c94-4d20-823c-e022714fd87e" >
 				<munit:attributes value="#[{queryParams: {'net-value': 'true'}}]" />
